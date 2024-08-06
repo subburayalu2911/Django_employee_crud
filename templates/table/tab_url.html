@@ -1,0 +1,22 @@
+
+{% load static %}
+
+<div class="col-md-12">
+    <div class="d-flex justify-content-between align-items-center">
+        <ul class="top_menu mt-3 mb-2">
+            {% if not queryset %}
+                <li><a class="{{employee_detail | default:''}}" href="{% url 'employee_app:add_employee_page' %}">Employee Detail</a></li>
+                <li><a  class="{{work_experience | default:''}}" href="javascript:void(0)">Work Experience</a></li>
+                <li><a  class="{{qualification | default:''}}" href="javascript:void(0)">Qualifications</a></li>
+                <li><a  class="{{project | default:''}}" href="javascript:void(0)">Project</a></li>
+            {% else %}
+                <li><a class="{{employee_detail | default:''}}" href="{% url 'employee_app:single_employee_crud' queryset.id %}">Employee Detail</a></li>
+                <li><a  class="{{work_experience | default:''}}" href="{% url 'employee_app:work_experience_page' queryset.id %}">Work Experience</a></li>
+                <li><a  class="{{qualification | default:''}}" href="{% url 'employee_app:qualification_page' queryset.id %}">Qualifications</a></li>
+                <li><a  class="{{project | default:''}}" href="{% url 'employee_app:project_page' queryset.id %}">Project</a></li>
+            {% endif %}
+        </ul>              
+    </div>                
+</div>
+
+

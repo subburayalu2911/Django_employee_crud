@@ -1,0 +1,249 @@
+{% extends "layout/layout.html" %}
+{% load static %}
+
+{% block static %}{%endblock %}
+
+{% block title %}Add Employee{% endblock %}
+
+{% block content %}
+<div class="content-part">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="d-flex align-items-center">
+                    <span class="back  me-3">
+                        <li style="list-style: none;">
+                            <a href="{% url 'employee_app:table_page' %}" data-flinkto="membertype"><i
+                                    class="fas fa-arrow-left"></i></a>
+                        </li>
+                    </span>
+                    <div class="common-head d-flex justify-content-between align-items-center">
+                        <h2>Employee Details</h2>
+                    </div>
+                </div>
+            </div>
+
+            {% include 'table/tab_url.html' with employee_detail='active' %}
+
+            <div class="col-md-12">
+                <div class="white_box p-4 mb-5">
+                    <form class="cform "  id="employee_create" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-4">
+                                    <label for="" class="form-label">Employee Name<sup style="position:static"> *</sup></label>
+                                    <input type="text" class="form-control" value="{{ queryset.name | default:'' }}" id="name" maxlength="255"
+                                        placeholder="Enter a Employee name" name="name">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-4">
+                                    <label for="" class="form-label">Email ID<sup style="position:static"> *</sup></label>
+                                    <input type="text" class="form-control" value="{{ queryset.email | default:'' }}" id="email" maxlength="50"
+                                        placeholder="Enter a Employee Email ID" name="email">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-4">
+                                    <label for="" class="form-label">Age<sup style="position:static"> *</sup></label>
+                                    <input type="text" class="form-control" onkeypress="return /[0-9]/.test(event.key);"
+                                        onpaste="return /[0-9]/.test(event.clipboardData.getData('text/plain'));"
+                                        placeholder="Please Enter Employee Age" id="age" value="{{ queryset.age | default:'' }}" maxlength="6"
+                                        name="age" >
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-4">
+                                    <label for="" class="form-label">Gender</label>
+                                    <select class="form-select form-control" aria-label="Default select example"
+                                        id="gender" name="gender" values="{{ queryset.gender }}">
+                                        <option value="Male" selected>Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-4">
+                                    <label for="" class="form-label">Phone Number<sup style="position:static"> *</sup></label>
+                                    <input type="text" class="form-control" value="{{ queryset.phoneNo | default:'' }}" id="phoneNo" maxlength="16"
+                                        placeholder="Enter a Employee Phone Number" name="phoneNo"
+                                        onkeypress="return /[0-9]/.test(event.key);"
+                                        onpaste="return /[0-9]/.test(event.clipboardData.getData('text/plain'));" >
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="" class="form-label mb-3">Employee Status</label>
+                                <div class="radio mb-4">
+                                    {% if not queryset %}
+                                        <input id="f-3" type="radio" name="active" value="1" checked onclick="">
+                                    {% else %}
+                                        <input id="f-3" type="radio" name="active" value="1" {% if queryset.employee_status == 1 %} checked {% endif %} onclick="">
+                                    {% endif %}
+                                    <label for="f-3">Active</label>
+                                    <input id="f-4" type="radio" name="inactive" value="0" onclick="">
+                                    <label for="f-4">Inactive</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>Profile Image</h4>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-4">
+                                    <input class="form-control" type="file" id="profile_image" name="profile_image" accept="image/*" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr />
+
+                        <h5>Address Details</h5>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="mb-4">
+                                    <label for="" class="form-label">House No<sup style="position:static"> *</sup></label>
+                                    <input type="text" class="form-control" value="{{address_details.hno | default:'' }}" id="hno" maxlength="255"
+                                        placeholder="Please Enter House number" name="hno">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-4">
+                                    <label for="" class="form-label">Street<sup style="position:static"> *</sup></label>
+                                    <input type="text" class="form-control" value="{{address_details.street | default:'' }}" id="street" maxlength="255"
+                                        placeholder="Please Enter Street" name="street">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-4">
+                                    <label for="" class="form-label">City<sup style="position:static"> *</sup></label>
+                                    <input type="text" class="form-control" value="{{address_details.city | default:'' }}" id="city" maxlength="255"
+                                        placeholder="Please Enter City" name="city">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-4">
+                                    <label for="" class="form-label">State<sup style="position:static"> *</sup></label>
+                                    <input type="text" class="form-control" value="{{address_details.state | default:'' }}" id="state" maxlength="255"
+                                        placeholder="Please Enter State" name="state">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="button-section d-flex justify-content-end align-items-center">
+                                    <button type="submit" id="employee_save_button" class="btn btn-blue">Save & Next</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{%endblock %}
+{% block script %}
+<script>
+    
+    $('#employee_create').submit(function(event) {
+            event.preventDefault(); 
+            form = document.getElementById('employee_create');
+            let query = '{{queryset}}';
+            const errorMessageDisplay = new ErrorMessageDisplay();
+            const errorMessages = [
+            {
+                "fieldId": "name",
+                "errorMessage": "This Field is required",
+                "type": "general",
+            },
+            {
+                "fieldId": "email",
+                "errorMessage": "This Field is required",
+                "type": "general",
+            },
+            {
+                "fieldId": "phoneNo",
+                "errorMessage": "This Field is required",
+                "type": "general",
+            },
+            {
+                "fieldId": "age",
+                "errorMessage": "This Field is required",
+                "type": "general",
+            },
+            {
+                "fieldId": "hno",
+                "errorMessage": "This Field is required",
+                "type": "general",
+            },
+            {
+                "fieldId": "street",
+                "errorMessage": "This Field is required",
+                "type": "general",
+            },
+            {
+                "fieldId": "city",
+                "errorMessage": "This Field is required",
+                "type": "general",
+            },
+            {
+                "fieldId": "state",
+                "errorMessage": "This Field is required",
+                "type": "general",
+            },
+            ]
+            const isFormValid = errorMessageDisplay.validateForm(errorMessages);
+            if (isFormValid) {
+                var formData = new FormData(this);
+                if(query){
+                    var emp_url = window.location.href;
+                }else{
+                    var emp_url = "{% url 'employee_app:create_employee' %}"
+                }
+
+                $.ajax({
+                    url: emp_url,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function(xhr, settings) {
+                        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                    },
+                    success: function(response) {
+                        let emp_id = response.emp_id
+                        if(emp_id){
+                            var redirect_url = '/table/employee/work_experience/' + emp_id + '/';
+                        }else{
+                            var redirect_url = window.location.href;
+                        }
+                        toastr.success(response.msg);
+                        setTimeout(() => {
+                                window.location.href = redirect_url;
+                            }, 3000);
+                    },
+                    error: function(xhr, status, error) {
+                        var response = xhr.responseJSON;
+                        if (response) {
+                            toastr.error(response.msg);
+                            setTimeout(() => {
+                                window.location.reload();
+                                    }, 3000);
+                        } else {
+                            toastr.error("An unexpected error occurred.", "Error");
+                        }
+                    }
+                });
+            }
+        });
+
+</script>
+{%endblock %}

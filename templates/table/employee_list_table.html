@@ -1,0 +1,128 @@
+{% extends "layout/layout.html" %}
+{% load static %}
+
+{% block static %}{%endblock %}
+
+{% block title %}Report Table{% endblock %}
+
+{% block content %}
+<!--header section end-->
+<div class="content-part">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="d-flex align-items-center">
+                    <div class="common-head d-flex justify-content-between align-items-center">
+                        <h2>Employee List</h2>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-end align-items-center mb-1">
+                    <span class="add">
+                        <a href="{% url 'employee_app:add_employee_page' %}" id="create_new_employee"><img
+                                src="/static/images/add_icon.svg" alt=""> Create New Employee</a>
+                    </span>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div id="table-scroll" class="table-scroll">
+                    <table id="main-table" class="main-table">
+                        <thead>
+                            <tr>
+                                <th>Employee Name</th>
+                                <th>Email</th>
+                                <th>Age</th>
+                                <th>Gender</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if queryset %}
+                            {% for employee in queryset %}
+                            <tr>
+                                <td><b>{{employee.name | title | truncatechars:15 }}</b></td>
+                                <td>{{employee.email | default:'-' }}</td>
+                                <td>{{employee.age | default:'-' }}</td>
+                                <td>{{employee.gender | default:'-' }}</td>
+                                <td>
+                                    <span class="trash mx-2"><a><img onclick="onDelete_employee('{{employee.id}}')"
+                                                src="{% static 'images/trash.svg' %}" alt="" /></a></span>
+                                    <span class="edit mx-2"><a href=""><img onclick="onEdit_employee('{{employee.id}}')"
+                                                src="{% static 'images/edit.svg' %}" alt="" /></a></span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <!-- Display "No result found" message if queryset is empty -->
+                            <tr>
+                                <td colspan="6" class="text-center">No result found</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                {% include 'layout/utils/paginator.html' %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    function onDelete_employee(employee_id) {
+
+        const baseURL = get_domain();
+        const url = `${baseURL}/table/add_employee_screen/${employee_id}/`;
+        event.preventDefault();
+        Swal.fire({
+            title: 'Are you sure?',
+            text: " Do you want delete this Employee!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            showCloseButton: true,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const accessToken = localStorage.getItem('access_token');
+                const headers = {
+                    'Authorization': `Bearer ${accessToken}`,
+                    "X-CSRFToken": "{{ csrf_token }}",
+                };
+                $.ajax({
+                    url: url,
+                    type: 'DELETE',
+                    headers: headers,
+                    success: function (response) {
+                        toastr.success(response.msg);
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 3000);
+                    },
+                    error: function (xhr, status, error) {
+                        var response = xhr.responseJSON;
+                        if (response) {
+                            toastr.error(response.msg);
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 3000);
+                        } else {
+                            toastr.error("An unexpected error occurred.", "Error");
+                        }
+                    }
+                })
+            }
+        })
+    }
+
+    function onEdit_employee(employee_id) {
+        event.preventDefault();
+        const baseURL = get_domain();
+        let edit_page_url = `${baseURL}/table/add_employee_screen/${employee_id}/`;
+        window.location.href = edit_page_url;
+    }
+</script>
+{% endblock %}

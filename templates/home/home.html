@@ -1,0 +1,92 @@
+{% extends "layout/layout.html" %}
+{% load static %}
+
+{% block static %}{%endblock %}
+
+{% block title %}Fin Info Home{% endblock %}
+
+{% block content %}
+<!--header section end-->
+<div class="content-part">
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-md-12 mb-3">
+        <div class="common-head d-flex justify-content-between align-items-center">
+          <h2>Fin Info Home</h2>
+          <!-- <span class="top_search relative">
+            <input type="text" placeholder="Customer / Vendor" />
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </span> -->
+        </div>
+      </div>
+      <div class="col-md-12 mt-5">
+        <div class="row">
+          <!-- Total Employee Card -->
+          <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total Employees</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_employees | default:'0' }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+
+          <!-- Active Employee Card -->
+          <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-success shadow h-100 py-2">
+                  <div class="card-body">
+                      <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                              <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                  Active Employees</div>
+                              <div class="h5 mb-0 font-weight-bold text-gray-800">{{ active_employees | default:'0' }}</div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          <!-- Inactive Employee Card -->
+          <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-info shadow h-100 py-2">
+                  <div class="card-body">
+                      <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                              In-Active Employees</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ inactive_employees | default:'0' }}</div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          <!-- Deleted Employee Card -->
+          <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                          <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                            Deleted Employees</div>
+                          <div class="h5 mb-0 font-weight-bold text-gray-800">{{ deleted_employees | default:'0' }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+      </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+

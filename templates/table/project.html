@@ -1,0 +1,258 @@
+{% extends "layout/layout.html" %}
+{% load static %}
+
+{% block static %}{%endblock %}
+
+{% block title %}Projects{% endblock %}
+
+{% block content %}
+<!--header section end-->
+<div class="content-part">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="d-flex align-items-center">
+                    <span class="back  me-3">
+                        <li style="list-style: none;">
+                            <a href="{% url 'employee_app:table_page' %}" data-flinkto="membertype"><i
+                                    class="fas fa-arrow-left"></i></a>
+                        </li>
+                    </span>
+                    <div class="common-head d-flex justify-content-between align-items-center">
+                        <h2>Projects</h2>
+                    </div>
+                </div>
+            </div>
+
+            {% include 'table/tab_url.html' with project='active' %}
+
+            <div class="d-flex justify-content-end align-items-center mb-1">
+                <span class="add">
+                    <a href="" data-bs-toggle="modal" data-bs-target="#add_projects" id="create_new_projects"><img
+                            src="/static/images/add_icon.svg" alt=""> Create New Project</a>
+                </span>
+            </div>
+
+            <div class="col-md-12">
+                <div id="table-scroll" class="table-scroll">
+                    <table id="main-table" class="main-table">
+                        <thead>
+                            <tr>
+                                <th>Project Name</th>
+                                <th>Description</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if project_datas %}
+                            {% for employee in project_datas %}
+                            <tr>
+                                <td><b>{{employee.title | title | truncatechars:15 }}</b></td>
+                                <td>{{employee.description | default:'-' | truncatechars:25 }}%</td>
+                                <td>
+                                    <span class="trash mx-2"><a><img onclick="onDelete_project('{{employee.id}}')"
+                                                src="{% static 'images/trash.svg' %}" alt="" /></a></span>
+                                    <span class="edit mx-2"><a href=""><img onclick="onEdit_project('{{employee.id}}')"
+                                                src="{% static 'images/edit.svg' %}" alt="" /></a></span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <!-- Display "No result found" message if queryset is empty -->
+                            <tr>
+                                <td colspan="6" class="text-center">No result found</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                {% include 'layout/utils/paginator.html' with queryset=project_datas %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Modal for add experience-->
+<div class="modal fade" id="add_projects" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+    aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Project Detail</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="cform" action="" method="post" id="project-form">
+                    {% csrf_token %}
+                    <div class="row mb-4">
+                        <div class="col-md-6 mt-4">
+                            <label for="" class="form-label">Project Name<sup style="position:static"> *</sup></label>
+                            <input type="text" maxlength="255" class="form-control" id="project_name"
+                                name="project_name" placeholder="Enter the Project Name">
+                        </div>
+                        <div class="col-md-6 mt-4">
+                            <label for="" class="form-label">Description<sup style="position:static">
+                                    *</sup></label>
+                            <input type="text" maxlength="255" class="form-control" id="description"
+                                name="description" placeholder="Enter the Description">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" maxlength="255" class="form-control" id="employee_id" name="employee_id"
+                                value="{{queryset.id}}" hidden>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button type="button" class="btn btn-grey" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-blue" data-instance_id=""
+                            id="save_project_button">Save</button>
+                    </div>
+                </form>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    DOMContentLoaded('add_projects');
+
+    $('#project-form').submit(function (event) {
+        event.preventDefault();
+        const errorMessageDisplay = new ErrorMessageDisplay();
+        const errorMessages = [
+            {
+                "fieldId": "project_name",
+                "errorMessage": "This Field is required",
+                "type": "general",
+            },
+            {
+                "fieldId": "description",
+                "errorMessage": "This Field is required",
+                "type": "general",
+            }
+        ]
+        const isFormValid = errorMessageDisplay.validateForm(errorMessages);
+        if (isFormValid) {
+            var formData = new FormData(this);
+            let instance_id = document.getElementById('save_project_button').dataset.instance_id;
+            if (instance_id && instance_id != '') {
+                var exact_url = '/table/employee/project/crud/' + instance_id + '/';
+            } else {
+                var exact_url = '{% url "employee_app:project_create" %}'
+            }
+            $.ajax({
+                url: exact_url,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                beforeSend: function (xhr, settings) {
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function (response) {
+                    toastr.success(response.msg);
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 3000);
+                },
+                error: function (xhr, status, error) {
+                    var response = xhr.responseJSON;
+                    if (response) {
+                        toastr.error(response.msg);
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 3000);
+                    } else {
+                        toastr.error("An unexpected error occurred.", "Error");
+                    }
+                }
+            });
+
+        }
+    });
+
+    function onEdit_project(project_id) {
+        event.preventDefault();
+        let url = "/table/employee/project/crud/" + project_id + '/';
+        $.ajax({
+            url: url,
+            type: 'GET',
+            processData: false,
+            contentType: false,
+            beforeSend: function (xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            },
+            success: function (response) {
+                let project_data = response.data;
+                $('#project_name').val(project_data['title'] ? project_data['title'] : '');
+                $('#description').val(project_data['description'] ? project_data['description'] : '0.00');
+                document.getElementById('save_project_button').dataset.instance_id = project_data['id']
+
+                $('#add_projects').modal('show');
+
+            },
+            error: function (xhr, status, error) {
+                var response = xhr.responseJSON;
+                if (response) {
+                    toastr.error(response.msg);
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 3000);
+                } else {
+                    toastr.error("An unexpected error occurred.", "Error");
+                }
+            }
+        })
+    }
+
+
+    function onDelete_project(project_id) {
+        const url = '/table/employee/project/crud/' + project_id + '/';
+        event.preventDefault();
+        Swal.fire({
+            title: 'Are you sure?',
+            text: " Do you want delete this Project Detail !",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            showCloseButton: true,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const accessToken = localStorage.getItem('access_token');
+                const headers = {
+                    'Authorization': `Bearer ${accessToken}`,
+                    "X-CSRFToken": "{{ csrf_token }}",
+                };
+                $.ajax({
+                    url: url,
+                    type: 'DELETE',
+                    headers: headers,
+                    success: function (response) {
+                        toastr.success(response.msg);
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 3000);
+                    },
+                    error: function (xhr, status, error) {
+                        var response = xhr.responseJSON;
+                        if (response) {
+                            toastr.error(response.msg);
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 3000);
+                        } else {
+                            toastr.error("An unexpected error occurred.", "Error");
+                        }
+                    }
+                })
+            }
+        })
+    }
+
+</script>
+{%endblock %}
