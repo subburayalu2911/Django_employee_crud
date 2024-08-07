@@ -96,8 +96,17 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="mb-4">
-                                    <input class="form-control" type="file" id="profile_image" name="profile_image" accept="image/*" />
+                                    <input class="form-control" type="file" id="profile_image" name="profile_image" accept="image/*" onchange="handleFileInputChange(this)" />
                                 </div>
+                            </div>
+                            <div class="col-md-3" id="profile_image_preview">
+                                {% if queryset.profile_image %}
+                                    <img id="delete_image_button" src="{% static 'images/trash.svg' %}" style="display: none;width: 25px;margin-left: 150px; position: absolute; cursor: pointer;" onclick="deleteImage()"></span>
+                                    <img class="rounded-circle" id="preview_image" src="{{ queryset.employee_image_url }}" value="{{ queryset.employee_image_url }}" alt="Preview" style="display: block; width: 150px; height: 150px; margin-left: 200px;">
+                                {% else %}
+                                    <img id="delete_image_button" src="{% static 'images/trash.svg' %}" style="display: none;width: 25px;margin-left: 150px; position: absolute;" onclick="deleteImage()"></span>
+                                    <img class="rounded-circle" id="preview_image" src="#" alt="Preview" style="display: none; width: 150px; height: 150px; margin-left: 200px;">
+                                {% endif %}
                             </div>
                         </div>
 
@@ -244,6 +253,38 @@
                 });
             }
         });
+
+
+        function handleFileInputChange(image) {
+        const input = document.getElementById('profile_image');
+        const previewImage = document.getElementById('preview_image');
+        const deleteButton = document.getElementById('delete_image_button');
+        const file = image.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                previewImage.src = e.target.result;
+                previewImage.style.display = 'block';
+                deleteButton.style.display = 'block';
+            };
+
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // Function to delete the selected image
+    function deleteImage() {
+        const input = document.getElementById('profile_image');
+        const previewImage = document.getElementById('preview_image');
+        const deleteButton = document.getElementById('delete_image_button');
+
+        input.value = ''; // Clear the file input
+        previewImage.src = '#'; // Reset the image source
+        previewImage.style.display = 'none';
+        deleteButton.style.display = 'none';
+    }
 
 </script>
 {%endblock %}

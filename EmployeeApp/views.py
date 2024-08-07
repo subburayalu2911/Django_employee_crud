@@ -21,7 +21,7 @@ def home_page(request):
 
 
 def table_page(request):
-    employee_datas = Employee.objects.all().exclude(employee_status=3)
+    employee_datas = Employee.objects.all().exclude(employee_status=2)
     context = {
         "queryset": employee_datas
     }

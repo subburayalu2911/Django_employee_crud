@@ -21,6 +21,15 @@ class Employee(models.Model):
     phoneNo = models.CharField(max_length=15, blank=True, null=True)
     profile_image = models.ImageField(blank=True, null=True, validators=[validate_image_extension],upload_to='employee/profile_image/')
 
+    @property
+    def employee_image_url(self):
+        image = self.profile_image.url
+        if image:
+            image_url = image.replace('/media/media/', '/media/')
+        else:
+            image_url = None
+        return image_url
+
 
 class EmployeeAddress(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
