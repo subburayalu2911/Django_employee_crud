@@ -88,17 +88,28 @@ WSGI_APPLICATION = 'Employee.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = dict(default={
-    'ENGINE': 'django.db.backends.mysql',
-    'NAME': str(os.getenv('DATABASE_NAME')),
-    'USER': str(os.getenv('DATABASE_USER')),
-    'PASSWORD': str(os.getenv('DATABASE_PASSWORD')),
-    'HOST': str(os.getenv('DATABASE_HOST')),
-    'PORT': '3306',
-    'OPTIONS': {
-        'charset': 'utf8mb4',
-    }
-})
+# DATABASES = dict(default={
+#     'ENGINE': 'django.db.backends.mysql',
+#     'NAME': str(os.getenv('DATABASE_NAME')),
+#     'USER': str(os.getenv('DATABASE_USER')),
+#     'PASSWORD': str(os.getenv('DATABASE_PASSWORD')),
+#     'HOST': str(os.getenv('DATABASE_HOST')),
+#     'PORT': '3306',
+#     'OPTIONS': {
+#         'charset': 'utf8mb4',
+#     }
+# })
+
+import dj_database_url
+import os
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.getenv("DATABASE_URL"),
+        conn_max_age=600,
+        ssl_require=True
+    )
+}
 
 
 # Password validation
